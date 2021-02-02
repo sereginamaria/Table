@@ -1,22 +1,21 @@
 import Vue from "vue";
 import Vuex from 'vuex'
 import axios from "axios";
-/*import "db.json";*/
+import {data} from "../../db.js";
 
 Vue.use(Vuex)
-
 const store = new Vuex.Store( {
     state: {
         users: []
     },
     actions: {
         GET_USERS_FROM_API({commit}) {
-            return axios('http://localhost:3000/user', {
+            return axios('http://localhost:3000/users', {
                 method: 'GET'
             })
                 .then((response) => {
                 commit('SET_USERS_TO_VUEX', response.data)
-            }).catch(this.state.users=JSON.parse('db.json'))
+            }).catch(this.state.users=data.users)
         }
     },
     mutations: {
