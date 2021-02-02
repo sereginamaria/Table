@@ -15,8 +15,8 @@ const store = new Vuex.Store( {
                 method: 'GET'
             })
                 .then((response) => {
-                commit('SET_USERS_TO_VUEX', response.data).catch(this.state.users=JSON.parse('db.json'))
-            })
+                commit('SET_USERS_TO_VUEX', response.data)
+            }).catch(this.state.users=JSON.parse('db.json'))
         }
     },
     mutations: {
