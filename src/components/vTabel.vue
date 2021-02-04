@@ -50,8 +50,7 @@
                                         label-cols-sm="3"
                                         label-align-sm="right"
                                         label-size="sm"
-                                        class="mb-0"
-                                >
+                                        class="mb-0">
                                         <b-input-group size="sm">
                                                 <b-form-input
                                                         id="filter-input"
@@ -66,14 +65,23 @@
                                         </b-input-group>
                                 </b-form-group>
                         </b-col>
-
-<!--                        <b-col sm="5" md="6" class="my-1">
-                                <date-range-picker/>
-                        </b-col>-->
                 </b-row>
+
+                <b-col lg="4" class="my-1 ml-5">
+                        <date-picker
+                                v-model="calendarRange"
+                                type="date" range
+                                placeholder="Select date range"
+                                @close="dateFilter"
+                                @clear="clear"
+                                @open="open"
+                        >
+                        </date-picker>
+                </b-col>
+
                 <b-table
                         striped hover
-                        :items="users_data"
+                        :items="items()"
                         :fields="fields"
                         :filter="filter"
                         :current-page="currentPage"
@@ -82,7 +90,7 @@
                         stacked="md"
                         show-empty
                         small
-                        @filtered="onFiltered">
+                        @filtered="onFiltered" >
                 </b-table>
 
                 <b-col sm="7" md="6" class="my-1">
@@ -99,15 +107,18 @@
         </b-container>
 </template>
 
-<script>
-        import Vue from 'vue'
-        import DateRangePicker from 'vue-mj-daterangepicker'
-        import 'vue-mj-daterangepicker/dist/vue-mj-daterangepicker.css'
-        Vue.use(DateRangePicker)
 
+<script>
+        import DatePicker from 'vue2-datepicker';
+        import 'vue2-datepicker/index.css';
+/*        import {data} from "../../db.js";*/
+
+        import 'vue2-datepicker/locale/ru';
     export default {
             name: "vTabel",
-            components: {},
+            components: {
+                    DatePicker
+            },
             data() {
                     return {
                             fields: [
@@ -123,7 +134,13 @@
                             sortBy: '',
                             filter: null,
                             filterOn: [],
-                            row: 1
+                            rows: -1,
+                            allowCompare: false,
+                            calendarCount: 1,
+                            calendarRange: [],
+                            calendarFilteredItems: [],
+                            calendarFilterTrue: false,
+                            countOfOpens: 0
 
                     }
             },
@@ -142,21 +159,55 @@
                     },
                     totalRows: {
                             get: function () {
-                                    if(this.row === 1){
+                                    if(this.rows === -1){
                                             return this.users_data.length
                                     } else {
-                                            return this.row
+                                            return this.rows
                                     }
                             },
-                            set: function (newRow) {
-                                    this.row = newRow
+                            set: function (newRows) {
+                                    this.rows = newRows
                             }
                     },
+                    changecalrenge() {
+                            return this.calendarRange
+                    }
             },
             methods: {
                     onFiltered(filteredItems) {
                             this.totalRows = filteredItems.length
                     },
+                    dateFilter(){
+                            for (var i = 0; i < this.users_data.length; ++i) {
+                                          var h = new Date(this.users_data[i].registration_date)
+                                          if (+h >= +this.changecalrenge[0] && +h <= +this.changecalrenge[1]) {
+                                                 this.calendarFilteredItems.push(this.users_data[i])
+                                          }
+                            }
+                            this.calendarFilterTrue = true
+                            this.totalRows = this.calendarFilteredItems.length
+                },
+                    items() {
+                            if (this.calendarFilterTrue){
+                                    return this.calendarFilteredItems
+                            } else {
+                                    return this.users_data
+                            }
+
+                    },
+                    clear() {
+                            this.calendarFilteredItems = []
+                            this.totalRows = -1
+                            this.calendarFilterTrue = false
+                    },
+                    open() {
+                            this.countOfOpens ++
+                            if (this.countOfOpens > 1) {
+                                    this.calendarFilteredItems = []
+                                    this.totalRows = -1
+                                    this.calendarFilterTrue = false
+                            }
+                    }
             }
     }
 </script>
