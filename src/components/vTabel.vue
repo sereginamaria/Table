@@ -178,14 +178,17 @@
                             this.totalRows = filteredItems.length
                     },
                     dateFilter(){
-                            for (var i = 0; i < this.users_data.length; ++i) {
-                                          var h = new Date(this.users_data[i].registration_date)
-                                          if (+h >= +this.changecalrenge[0] && +h <= +this.changecalrenge[1]) {
-                                                 this.calendarFilteredItems.push(this.users_data[i])
-                                          }
+                            if (this.calendarRange.length !== 0 && this.calendarRange[0] != null && this.calendarRange[1] != null) {
+                                    for (var i = 0; i < this.users_data.length; ++i) {
+                                            var h = new Date(this.users_data[i].registration_date)
+                                            if (+h >= +this.changecalrenge[0] && +h <= +this.changecalrenge[1]) {
+                                                    this.calendarFilteredItems.push(this.users_data[i])
+                                            }
+                                    }
+                                    this.calendarFilterTrue = true
+                                    this.totalRows = this.calendarFilteredItems.length
+                                    console.log(this.calendarRange)
                             }
-                            this.calendarFilterTrue = true
-                            this.totalRows = this.calendarFilteredItems.length
                 },
                     items() {
                             if (this.calendarFilterTrue){

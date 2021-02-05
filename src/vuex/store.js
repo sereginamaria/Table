@@ -6,7 +6,7 @@ import {data} from "../../db.js";
 Vue.use(Vuex)
 const store = new Vuex.Store( {
     state: {
-        users: []
+        users: [],
     },
     actions: {
         GET_USERS_FROM_API({commit}) {
